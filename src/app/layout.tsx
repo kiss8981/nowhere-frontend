@@ -1,14 +1,14 @@
 import type { Metadata } from "next";
-import { Nanum_Gothic } from "next/font/google";
+import { Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { classNames } from "@/utils/utils";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 
-const nanum_gothic = Nanum_Gothic({
-  weight: ["400", "700", "800"],
+const notoSans = Noto_Sans({
+  weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
   subsets: ["latin"],
-  variable: "--font-nanum-gothic",
+  variable: "--font-noto-sans",
 });
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko">
-      <body className={classNames(nanum_gothic.variable, "font-sans")}>
+      <body className={classNames(notoSans.variable, "font-sans")}>
         <Header />
         {children}
         <Footer />
