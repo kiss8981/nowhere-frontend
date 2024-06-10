@@ -4,6 +4,7 @@ import "./globals.css";
 import { classNames } from "@/utils/utils";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
+import { SocketProvider } from "@/components/provider/SocketProvider";
 
 const notoSans = Noto_Sans({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -24,9 +25,11 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={classNames(notoSans.variable, "font-sans")}>
-        <Header />
-        {children}
-        <Footer />
+        <SocketProvider>
+          <Header />
+          {children}
+          <Footer />
+        </SocketProvider>
       </body>
     </html>
   );

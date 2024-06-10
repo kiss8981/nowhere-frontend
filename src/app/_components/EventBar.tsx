@@ -1,6 +1,10 @@
 "use client";
 
+import { useState } from "react";
+import CreateEventModal from "./modal/CreateEvent";
+
 const EventBar = () => {
+  const [openNewEventModal, setOpenNewEventModal] = useState(false);
   return (
     <>
       {/** Event List Side Bar overlay */}
@@ -14,10 +18,20 @@ const EventBar = () => {
                 <p className="text-sm">Event Date</p>
               </div>
             </div>
-            <button className="text-lg font-bold">+</button>
+            <button
+              className="text-lg font-bold"
+              onClick={() => setOpenNewEventModal(true)}
+            >
+              +
+            </button>
           </div>
         </div>
       </aside>
+
+      <CreateEventModal
+        open={openNewEventModal}
+        onClose={() => setOpenNewEventModal(false)}
+      />
     </>
   );
 };
