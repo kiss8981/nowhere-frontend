@@ -3,14 +3,24 @@ import { Event } from "@/types/Event";
 
 interface EventStore {
   events: Event[];
+  selectedEvent: Event | null;
   setEvents: (events: Event[]) => void;
   addEvent: (event: Event) => void;
+  selectEvent: (event: Event) => void;
 }
 
 export const useEventStore = create<EventStore>(set => ({
   events: [],
+  selectedEvent: null,
   setEvents: events => set({ events }),
-  addEvent: event => set(state => ({ events: [...state.events, event] })),
+  addEvent: event =>
+    set(state => ({
+      events: [event, ...state.events].sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+      ),
+    })),
+  selectEvent: event => set({ selectedEvent: event }),
 }));
 
 export const useAddEvent = () => {

@@ -1,8 +1,9 @@
 "use client";
 
-import { useAddEvent } from "@/stores/eventStore";
+import { useAddEvent, useEventStore } from "@/stores/eventStore";
 import { SocketEvent } from "@/types/Socket";
 import { createContext, useContext, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { io, Socket as SocketIO } from "socket.io-client";
 
 type ClientSocketType = SocketIO<SocketEvent>;
@@ -23,6 +24,7 @@ export const useSocket = () => {
 
 export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const [socket, setSocket] = useState<ClientSocketType | null>(null);
+  const { addEvent } = useEventStore();
   const [isConnected, setIsConnected] = useState(false);
 
   useEffect(() => {
@@ -43,6 +45,15 @@ export const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     socket.on("disconnect", () => {
       setIsConnected(false);
+    });
+
+    socket.on("LAST_EVENTS", events => {
+      events.forEach(event => addEvent(event));
+    });
+
+    socket.on("CREATE_EVENT", event => {
+      addEvent(event);
+      toast.success("새로운 이벤트가 생성되었습니다!");
     });
 
     setSocket(socket);

@@ -5,6 +5,7 @@ import { classNames } from "@/utils/utils";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import { SocketProvider } from "@/components/provider/SocketProvider";
+import { Toaster } from "react-hot-toast";
 
 const notoSans = Noto_Sans({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -29,6 +30,7 @@ export default function RootLayout({
           <Header />
           {children}
           <Footer />
+          <Toaster />
         </SocketProvider>
       </body>
     </html>

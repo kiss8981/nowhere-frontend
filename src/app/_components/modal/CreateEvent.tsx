@@ -3,6 +3,9 @@ import { useRef, useState } from "react";
 import LocationSelect from "./LocationSelect";
 import { motion } from "framer-motion";
 import { useOutsideClick } from "@/hooks/useOutsideClick";
+import { fetcher } from "@/apis/fetcher";
+import toast from "react-hot-toast";
+import { AxiosError } from "axios";
 
 export interface CreateEventModalProps {
   open: boolean;
@@ -43,17 +46,37 @@ const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
     }));
   };
 
+  const handleCreateEvent = async () => {
+    const event = {
+      title: formData.title,
+      description: formData.description || "",
+      isAnonymous: formData.isAnonymous,
+      latitude: formData.latitude,
+      longitude: formData.longitude,
+      address: formData.address,
+      addressOfplace: formData.addressOfPlace,
+    };
+
+    await toast.promise(fetcher.post("/event", event), {
+      loading: "지금 여기에 이벤트를 만들고 있어요...",
+      success: "지금 여기에 이벤트를 만들었어요!",
+      error: (error: AxiosError) => {
+        if (error instanceof AxiosError) {
+          return "지금 여기에 이벤트를 만들지 못했어요!";
+        } else {
+          return "지금 여기에 이벤트를 만들지 못했어요!";
+        }
+      },
+    });
+  };
+
   return (
     <>
       {open && (
         <div className="fixed inset-0 bg-gray-800 bg-opacity-75 flex justify-center items-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-            <h2 className="text-2xl mb-4">Create Post</h2>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Title:
-                </label>
                 <input
                   type="text"
                   name="title"
@@ -61,16 +84,15 @@ const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
                   onChange={e => {
                     setFormData({ ...formData, title: e.target.value });
                   }}
+                  placeholder="지금 여기에 연예인 ~가 있어요!"
                   className="mt-1 p-2 border border-gray-300 rounded-md w-full"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">
-                  Description:
-                </label>
                 <textarea
                   name="description"
                   value={formData.description}
+                  placeholder="아마 5분 있다가 다른데로 이동할 것 같아요!"
                   onChange={e => {
                     setFormData({ ...formData, description: e.target.value });
                   }}
@@ -88,7 +110,7 @@ const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
                   className="h-4 w-4 text-blue-600 border-gray-300 rounded"
                 />
                 <label className="ml-2 block text-sm font-medium text-gray-700">
-                  Anonymous
+                  익명으로 작성
                 </label>
               </div>
               <div className="flex flex-col">
@@ -156,10 +178,19 @@ const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
               <div className="flex justify-end">
                 <button
                   type="button"
-                  onClick={() => {}}
+                  onClick={handleCreateEvent}
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg mr-2"
+                >
+                  만들기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onClose();
+                  }}
                   className="px-4 py-2 bg-gray-500 text-white rounded-lg"
                 >
-                  Close
+                  취소
                 </button>
               </div>
             </div>

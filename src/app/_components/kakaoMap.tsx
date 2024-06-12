@@ -3,12 +3,17 @@
 import { useSocket } from "@/components/provider/SocketProvider";
 import { useAddEvent, useEventStore } from "@/stores/eventStore";
 import { useEffect, useState } from "react";
-import { useKakaoLoader, Map, MapMarker } from "react-kakao-maps-sdk";
+import {
+  useKakaoLoader,
+  Map,
+  MapMarker,
+  CustomOverlayMap,
+} from "react-kakao-maps-sdk";
 
 const KakaoMap = () => {
   const { socket } = useSocket();
-  const { events, addEvent } = useEventStore();
-  const [initLocation, setInitLocation] = useState({
+  const { events, addEvent, selectedEvent, selectEvent } = useEventStore();
+  const [location, setLocation] = useState({
     lat: 33.5563,
     lng: 126.79581,
   });
@@ -18,24 +23,25 @@ const KakaoMap = () => {
   });
 
   useEffect(() => {
+    if (selectedEvent) {
+      setLocation({
+        lat: selectedEvent.location.latitude,
+        lng: selectedEvent.location.longitude,
+      });
+    }
+  }, [selectedEvent]);
+
+  useEffect(() => {
     // get real location from navigator.geolocation
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(position => {
-        setInitLocation({
+        setLocation({
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         });
       });
     } else {
       console.log("Geolocation is not supported by this browser.");
-    }
-  }, []);
-
-  useEffect(() => {
-    if (socket) {
-      socket.on("CREATE_EVENT", event => {
-        addEvent(event);
-      });
     }
   }, []);
 
@@ -49,22 +55,42 @@ const KakaoMap = () => {
   return (
     <>
       <Map
-        center={{ lat: initLocation.lat, lng: initLocation.lng }}
+        center={{ lat: location.lat, lng: location.lng }}
         style={{ width: "100%", height: "100vh" }}
       >
         {events.map((event, index) => (
-          <MapMarker
-            key={index}
-            position={{
-              lat: event.location.latitude,
-              lng: event.location.longitude,
-            }}
-            onClick={() => {
-              console.log("click");
-            }}
-          >
-            <div className="w-8 h-8 bg-red-500 rounded-full"></div>
-          </MapMarker>
+          <>
+            <MapMarker
+              key={index}
+              position={{
+                lat: event.location.latitude,
+                lng: event.location.longitude,
+              }}
+              onClick={() => {
+                selectEvent(event);
+              }}
+            />
+            <CustomOverlayMap
+              position={{
+                lat: event.location.latitude,
+                lng: event.location.longitude,
+              }}
+              key={index}
+              yAnchor={1.7}
+            >
+              <div
+                className="bg-white p-2 rounded-lg shadow-lg"
+                onClick={() => {
+                  selectEvent(event);
+                }}
+              >
+                <h1 className="text-lg font-semibold">{event.title}</h1>
+                <p className="text-sm font-light text-gray-500">
+                  {event.description}
+                </p>
+              </div>
+            </CustomOverlayMap>
+          </>
         ))}
       </Map>
     </>

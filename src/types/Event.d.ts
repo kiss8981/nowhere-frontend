@@ -1,7 +1,9 @@
 export interface Event {
+  id: number;
   title: string;
   description: string;
   isAnonymous: boolean;
+  createdAt: Date;
   user: {
     name: string;
   };

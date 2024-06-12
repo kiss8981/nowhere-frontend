@@ -48,6 +48,7 @@ const LocationSelect: React.FC<LocationSelectProps> = ({
             result[0].address.address_name ||
             "";
           onSelectLocation(position.lat, position.lng, address, "");
+          setViewPosition(position);
         }
       });
     }
