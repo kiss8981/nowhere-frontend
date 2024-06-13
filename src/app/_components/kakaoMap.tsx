@@ -93,6 +93,25 @@ const KakaoMap = () => {
           </>
         ))}
       </Map>
+
+      <button
+        className="absolute bottom-4 right-4 bg-white p-2 rounded-md shadow-md z-50"
+        onClick={() => {
+          navigator.geolocation.getCurrentPosition(position => {
+            setLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+          });
+        }}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/icon/gps-location-icon.svg"
+          alt="location"
+          className="w-6 h-6"
+        />
+      </button>
     </>
   );
 };

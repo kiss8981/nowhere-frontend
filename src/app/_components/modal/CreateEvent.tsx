@@ -57,17 +57,21 @@ const CreateEventModal = ({ open, onClose }: CreateEventModalProps) => {
       addressOfplace: formData.addressOfPlace,
     };
 
-    await toast.promise(fetcher.post("/event", event), {
-      loading: "지금 여기에 이벤트를 만들고 있어요...",
-      success: "지금 여기에 이벤트를 만들었어요!",
-      error: (error: AxiosError) => {
-        if (error instanceof AxiosError) {
-          return "지금 여기에 이벤트를 만들지 못했어요!";
-        } else {
-          return "지금 여기에 이벤트를 만들지 못했어요!";
-        }
-      },
-    });
+    await toast
+      .promise(fetcher.post("/event", event), {
+        loading: "지금 여기에 이벤트를 만들고 있어요...",
+        success: "지금 여기에 이벤트를 만들었어요!",
+        error: (error: AxiosError) => {
+          if (error instanceof AxiosError) {
+            return "지금 여기에 이벤트를 만들지 못했어요!";
+          } else {
+            return "지금 여기에 이벤트를 만들지 못했어요!";
+          }
+        },
+      })
+      .finally(() => {
+        onClose();
+      });
   };
 
   return (
